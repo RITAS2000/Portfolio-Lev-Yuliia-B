@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 const PORT = process.env.PORT;
 export function setupServer() {
   const app = express();
+  app.set('trust proxy', 1);
 
   const frontendUrl = process.env.FRONTEND_URL;
 
