@@ -5,11 +5,11 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import rateLimit from 'express-rate-limit';
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 export function setupServer() {
   const app = express();
 
-  const frontendUrl = 'https://portfolio-lev-yuliia.vercel.app';
+  const frontendUrl = process.env.FRONTEND_URL;
 
   app.use(
     cors({
