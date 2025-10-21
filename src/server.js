@@ -1,0 +1,43 @@
+import express from 'express';
+import cors from 'cors';
+import routes from './routes/index.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import rateLimit from 'express-rate-limit';
+
+const PORT = 3000;
+export function setupServer() {
+  const app = express();
+
+  const frontendUrl = 'https://portfolio-lev-yuliia.vercel.app';
+
+  app.use(
+    cors({
+      origin: frontendUrl,
+      credentials: true,
+    }),
+  );
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (!origin || origin !== frontendUrl) {
+      return res.status(403).end();
+    }
+    next();
+  });
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Too many requests, please try again later.',
+  });
+  app.use(limiter);
+  app.use(express.json());
+  app.use('/portfolio', routes);
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
